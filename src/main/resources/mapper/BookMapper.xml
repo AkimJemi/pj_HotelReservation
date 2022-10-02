@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sinnotech.hotel.mapper.BookMapper">
+	<resultMap type="com.sinnotech.hotel.dto.BookingsDTO" id="bookingsDTO"
+		autoMapping="true">
+		<id property="id" column="id" />
+		<result property="userId" column="user_id" />
+		<result property="roomId" column="room_id" />
+		<result property="price" column="price" />
+		<result property="payFlag" column="pay_flag" />
+		<result property="cancelFlag" column="cancel_flag" />
+		<result property="adultCnt" column="adult_cnt" />
+		<result property="childrenCnt" column="children_cnt" />
+		<result property="startDate" column="start_dt" />
+		<result property="endDate" column="end_dt" />
+		<result property="options" column="options" />
+		<result property="deleteFlag" column="delete_flag" />
+		<result property="createdAt" column="created_at" />
+		<result property="updatedAt" column="updated_at" />
+	</resultMap>
+	
+	<select id="getAllBookList" resultMap="bookingsDTO">
+		SELECT *
+		FROM bookings
+	</select>
+	
+	<select id="searchBookList" resultMap="bookingsDTO">
+		SELECT *
+		FROM bookings	
+		<choose>
+		<when test="paging.contentsUserID != null">
+		<if test="paging.title == 'user'">
+		WHERE user_id IN
+		</if>
+		<if test="paging.title == 'room'">
+		WHERE room_id IN
+		</if>
+		<foreach collection="paging.contentsUserID" item="Id" open="(" close=")" separator="," >
+		#{Id}
+		</foreach>
+		</when>
+		<when test="paging.title == 'no'">
+		WHERE id = #{paging.contentForId}
+		</when>
+		<when test="paging.title == 'no'">
+		WHERE id = #{paging.contentForId}
+		</when>
+		<otherwise>
+		WHERE 1=-1
+		</otherwise>
+		</choose>
+		AND delete_flag = false
+	</select>
+	<select id="getBookInfo" resultMap="bookingsDTO" >
+		SELECT *
+		FROM bookings
+		WHERE id
+		= #{id}
+	</select>
+	<update id="updateBookInfo">
+		UPDATE
+		bookings
+		SET
+		updated_at = now()
+		WHERE
+		id = #{book.id}
+	</update>
+</mapper>
